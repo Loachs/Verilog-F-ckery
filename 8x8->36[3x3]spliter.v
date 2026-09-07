@@ -4,7 +4,7 @@ module retardmaxedbullshit(
 READ THIS BEFORE YOU DO ANYTHING
 
 {--------------------------------}
-You must have over 280 pins to
+You must have over 281 pins to
 allocate to use this because
 of this code -READ THIS-
 I will be working to decrease this
@@ -34,6 +34,8 @@ input [7:0] row5,
 input [7:0] row6,
 input [7:0] row7,
 input [7:0] row8,
+
+input clk;
 
 /*
 The outputs will be notated as rNcN where r is the row N is the location of the row in 

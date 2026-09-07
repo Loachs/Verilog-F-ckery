@@ -7,6 +7,7 @@ READ THIS BEFORE YOU DO ANYTHING
 You must have over 280 pins to
 allocate to use this because
 of this code -READ THIS-
+I will be working to decrease this
 {--------------------------------}
 
 All rows will be either 1 or 0 ex: 001-001-100 (dashes represent a 3 split)

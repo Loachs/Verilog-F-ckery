@@ -176,6 +176,12 @@ always @* begin
 	r5c1x = 9'b0; r5c1y = 9'b0;
 	r6c1x = 9'b0; r6c1y = 9'b0;
 	
+/*
+sets the base at 0 at the start, we are then able to change it
+I ordered these so that the first x and y column and rows systems
+are all match together.
+*/
+	
 	case (muxcnt)
 		3'b000: begin
 			r1c1x = xval[0][0]; r1c1y = yval[0][0];
@@ -184,6 +190,7 @@ always @* begin
 			r4c1x = xval[3][0]; r4c1y = yval[3][0];
 			r5c1x = xval[4][0]; r5c1y = yval[4][0];
 			r6c1x = xval[5][0]; r6c1y = yval[5][0];
+// sets the values at muxcnt of 000
 		end
 		3'b001: begin	
 			r1c1x = xval[0][1]; r1c1y = yval[0][1];
@@ -192,6 +199,7 @@ always @* begin
 			r4c1x = xval[3][1]; r4c1y = yval[3][1];
 			r5c1x = xval[4][1]; r5c1y = yval[4][1];
 			r6c1x = xval[5][1]; r6c1y = yval[5][1];
+// sets the values at muxcnt of 001
 		end
 		3'b010: begin 
 			r1c1x = xval[0][2]; r1c1y = yval[0][2];
@@ -200,6 +208,7 @@ always @* begin
 			r4c1x = xval[3][2]; r4c1y = yval[3][2];
 			r5c1x = xval[4][2]; r5c1y = yval[4][2];
 			r6c1x = xval[5][2]; r6c1y = yval[5][2];
+// sets the values at muxcnt of 010
 		end
 		3'b011: begin 
 			r1c1x = xval[0][3]; r1c1y = yval[0][3];
@@ -208,6 +217,7 @@ always @* begin
 			r4c1x = xval[3][3]; r4c1y = yval[3][3];
 			r5c1x = xval[4][3]; r5c1y = yval[4][3];
 			r6c1x = xval[5][3]; r6c1y = yval[5][3];
+// sets the values at muxcnt of 011
 		end
 		3'b100: begin
 			r1c1x = xval[0][4]; r1c1y = yval[0][4];
@@ -216,6 +226,7 @@ always @* begin
 			r4c1x = xval[3][4]; r4c1y = yval[3][4];
 			r5c1x = xval[4][4]; r5c1y = yval[4][4];
 			r6c1x = xval[5][4]; r6c1y = yval[5][4];
+// sets the values at muxcnt of 100
 		end
 		3'b101: begin
 			r1c1x = xval[0][5]; r1c1y = yval[0][5];
@@ -224,6 +235,7 @@ always @* begin
 			r4c1x = xval[3][5]; r4c1y = yval[3][5];
 			r5c1x = xval[4][5]; r5c1y = yval[4][5];
 			r6c1x = xval[5][5]; r6c1y = yval[5][5];
+// sets the values at muxcnt of 101
 		end
 	endcase
 end

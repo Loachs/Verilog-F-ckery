@@ -4,7 +4,7 @@ module retardmaxedbullshit(
 READ THIS BEFORE YOU DO ANYTHING
 
 {--------------------------------}
-You must have over 281 pins to
+You must have over 104 pins to
 allocate to use this because
 of this code -READ THIS-
 I will be working to decrease this
@@ -35,7 +35,20 @@ input [7:0] row6,
 input [7:0] row7,
 input [7:0] row8,
 
-input clk;
+input clk, // Our constant clock value
+
+input [2:0] muxcnt, // This is what will control out mux
+/*
+READ THIS
+The mux count will max out at 3 bits. We will use our mux to
+go through the values 0-5, this is because we are working in a 
+6x6 matrix therefore by capping out mux at 6 we can use it as a
+positional vector for when we calculate rows and columns
+This is also to reduce the pin count by 180, since currently we 
+have 216 output pins and since we mux by 6, that goes down to 
+36 exits which saves us a total of 180 pins - total pin count will
+end up being 104 once we are done
+*/
 
 /*
 The outputs will be notated as rNcN where r is the row N is the location of the row in 
@@ -54,124 +67,22 @@ I dont think I can use a generate function for my output declaration
 */
 
 output [2:0] r1c1x,
-output [2:0] r1c1y,
-
-output [2:0] r1c2x,
-output [2:0] r1c2y,
-
-output [2:0] r1c3x,
-output [2:0] r1c3y,
-
-output [2:0] r1c4x,
-output [2:0] r1c4y,
-
-output [2:0] r1c5x,
-output [2:0] r1c5y,
-
-output [2:0] r1c6x,
-output [2:0] r1c6y,
-
-// End of first row 
+output [2:0] r1c1y, 
 
 output [2:0] r2c1x,
 output [2:0] r2c1y,
 
-output [2:0] r2c2x,
-output [2:0] r2c2y,
-
-output [2:0] r2c3x,
-output [2:0] r2c3y,
-
-output [2:0] r2c4x,
-output [2:0] r2c4y,
-
-output [2:0] r2c5x,
-output [2:0] r2c5y,
-
-output [2:0] r2c6x,
-output [2:0] r2c6y,
-
-// End of second row
-
 output [2:0] r3c1x,
 output [2:0] r3c1y,
-
-output [2:0] r3c2x,
-output [2:0] r3c2y,
-
-output [2:0] r3c3x,
-output [2:0] r3c3y,
-
-output [2:0] r3c4x,
-output [2:0] r3c4y,
-
-output [2:0] r3c5x,
-output [2:0] r3c5y,
-
-output [2:0] r3c6x,
-output [2:0] r3c6y,
-
-// End of third row
 
 output [2:0] r4c1x,
 output [2:0] r4c1y,
 
-output [2:0] r4c2x,
-output [2:0] r4c2y,
-
-output [2:0] r4c3x,
-output [2:0] r4c3y,
-
-output [2:0] r4c4x,
-output [2:0] r4c4y,
-
-output [2:0] r4c5x,
-output [2:0] r4c5y,
-
-output [2:0] r4c6x,
-output [2:0] r4c6y,
-
-// End of fourth row
-
 output [2:0] r5c1x,
 output [2:0] r5c1y,
 
-output [2:0] r5c2x,
-output [2:0] r5c2y,
-
-output [2:0] r5c3x,
-output [2:0] r5c3y,
-
-output [2:0] r5c4x,
-output [2:0] r5c4y,
-
-output [2:0] r5c5x,
-output [2:0] r5c5y,
-
-output [2:0] r5c6x,
-output [2:0] r5c6y,
-
-// End of fifth row
-
 output [2:0] r6c1x,
-output [2:0] r6c1y,
-
-output [2:0] r6c2x,
-output [2:0] r6c2y,
-
-output [2:0] r6c3x,
-output [2:0] r6c3y,
-
-output [2:0] r6c4x,
-output [2:0] r6c4y,
-
-output [2:0] r6c5x,
-output [2:0] r6c5y,
-
-output [2:0] r6c6x,
-output [2:0] r6c6y
-
-// End of sixth row
+output [2:0] r6c1y
 ); 
 
 /*
@@ -239,124 +150,62 @@ we then end our loop by putting the values from the rows and columns into our yv
 
 */
 
+wire [5:0] x1 [0:5];
+assign x1[0] = r1c1x;
+assign x1[1] = r2c1x;
+assign x1[2] = r3c1x;
+assign x1[3] = r4c1x;
+assign x1[4] = r5c1x;
+assign x1[5] = r6c1x;
+
+wire [5:0] y1 [0:5];
+assign y1[0] = r1c1y;
+assign y1[1] = r2c1y;
+assign y1[2] = r3c1y;
+assign y1[3] = r4c1y;
+assign y1[4] = r5c1y;
+assign y1[5] = r6c1y;
+
+genvar i;
+generate
+	for (i = 0; i < 6; i = i + 1) begin : count
+		always @* begin 
+			case (muxcnt)
+				3'b000: x1[0] = xval[i][0];
+				3'b001: x1[1] = xval[i][1];
+				3'b010: x1[2] = xval[i][2];
+				3'b011: x1[3] = xval[i][3];
+				3'b100: x1[4] = xval[i][4];
+				3'b101: x1[5] = xval[i][5];
+				
+				3'b000: y1[0] = yval[i][0];
+				3'b001: y1[1] = yval[i][1];
+				3'b010: y1[2] = yval[i][2];
+				3'b011: y1[3] = yval[i][3];
+				3'b100: y1[4] = yval[i][4];
+				3'b101: y1[5] = yval[i][5];
+			endcase
+		end
+	end
+endgenerate
+
 assign r1c1x = xval[0][0];
 assign r1c1y = yval[0][0];
-
-assign r1c2x = xval[0][1];
-assign r1c2y = yval[0][1];
-
-assign r1c3x = xval[0][2];
-assign r1c3y = yval[0][2];
-
-assign r1c4x = xval[0][3];
-assign r1c4y = yval[0][3];
-
-assign r1c5x = xval[0][4];
-assign r1c5y = yval[0][4];
-
-assign r1c6x = xval[0][5];
-assign r1c6y = yval[0][5];
-
-// End of first row 
 
 assign r2c1x = xval[1][0];
 assign r2c1y = yval[1][0];
 
-assign r2c2x = xval[1][1];
-assign r2c2y = yval[1][1];
-
-assign r2c3x = xval[1][2];
-assign r2c3y = yval[1][2];
-
-assign r2c4x = xval[1][3];
-assign r2c4y = yval[1][3];
-
-assign r2c5x = xval[1][4];
-assign r2c5y = yval[1][4];
-
-assign r2c6x = xval[1][5];
-assign r2c6y = yval[1][5];
-
-// End of second row
-
 assign r3c1x = xval[2][0];
 assign r3c1y = yval[2][0];
-
-assign r3c2x = xval[2][1];
-assign r3c2y = yval[2][1];
-
-assign r3c3x = xval[2][2];
-assign r3c3y = yval[2][2];
-
-assign r3c4x = xval[2][3];
-assign r3c4y = yval[2][3];
-
-assign r3c5x = xval[2][4];
-assign r3c5y = yval[2][4];
-
-assign r3c6x = xval[2][5];
-assign r3c6y = yval[2][5];
-
-// End of third row
 
 assign r4c1x = xval[3][0];
 assign r4c1y = yval[3][0];
 
-assign r4c2x = xval[3][1];
-assign r4c2y = yval[3][1];
-
-assign r4c3x = xval[3][2];
-assign r4c3y = yval[3][2];
-
-assign r4c4x = xval[3][3];
-assign r4c4y = yval[3][3];
-
-assign r4c5x = xval[3][4];
-assign r4c5y = yval[3][4];
-
-assign r4c6x = xval[3][5];
-assign r4c6y = yval[3][5];
-
-// End of fourth row
-
 assign r5c1x = xval[4][0];
 assign r5c1y = yval[4][0];
-
-assign r5c2x = xval[4][1];
-assign r5c2y = yval[4][1];
-
-assign r5c3x = xval[4][2];
-assign r5c3y = yval[4][2];
-
-assign r5c4x = xval[4][3];
-assign r5c4y = yval[4][3];
-
-assign r5c5x = xval[4][4];
-assign r5c5y = yval[4][4];
-
-assign r5c6x = xval[4][5];
-assign r5c6y = yval[4][5];
-
-// End of fifth row
 
 assign r6c1x = xval[5][0];
 assign r6c1y = yval[5][0];
 
-assign r6c2x = xval[5][1];
-assign r6c2y = yval[5][1];
-
-assign r6c3x = xval[5][2];
-assign r6c3y = yval[5][2];
-
-assign r6c4x = xval[5][3];
-assign r6c4y = yval[5][3];
-
-assign r6c5x = xval[5][4];
-assign r6c5y = yval[5][4];
-
-assign r6c6x = xval[5][5];
-assign r6c6y = yval[5][5];
-
-// End of sixth row
-
 endmodule
+

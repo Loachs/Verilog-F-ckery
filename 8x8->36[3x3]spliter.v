@@ -4,7 +4,7 @@ module retardmaxedbullshit(
 READ THIS BEFORE YOU DO ANYTHING
 
 {--------------------------------}
-You must have over 104 pins to
+You must have over 176 pins to
 allocate to use this because
 of this code -READ THIS-
 I will be working to decrease this
@@ -48,6 +48,10 @@ This is also to reduce the pin count by 180, since currently we
 have 216 output pins and since we mux by 6, that goes down to 
 36 exits which saves us a total of 180 pins - total pin count will
 end up being 104 once we are done
+
+This has been changed we now have a total of 176 pins, this is because I want
+one string with all values of row / column which just means the outputs of 
+muxed pins is *3
 */
 
 /*
@@ -66,23 +70,12 @@ has made troubleshooting a lot harder especialy when we get in the realm of havi
 I dont think I can use a generate function for my output declaration
 */
 
-output [2:0] r1c1x,
-output [2:0] r1c1y, 
-
-output [2:0] r2c1x,
-output [2:0] r2c1y,
-
-output [2:0] r3c1x,
-output [2:0] r3c1y,
-
-output [2:0] r4c1x,
-output [2:0] r4c1y,
-
-output [2:0] r5c1x,
-output [2:0] r5c1y,
-
-output [2:0] r6c1x,
-output [2:0] r6c1y
+output reg [8:0] r1c1x, output reg [8:0] r1c1y, 
+output reg [8:0] r2c1x, output reg [8:0] r2c1y,
+output reg [8:0] r3c1x, output reg [8:0] r3c1y,
+output reg [8:0] r4c1x, output reg [8:0] r4c1y,
+output reg [8:0] r5c1x, output reg [8:0] r5c1y,
+output reg [8:0] r6c1x, output reg [8:0] r6c1y
 ); 
 
 /*
@@ -105,8 +98,8 @@ This is just helping with out generate loop that we will have underneath, it wil
 increment the row value without needing to make a loop for every singl row / column
 */
 
-wire [2:0] xval [0:5][0:5];
-wire [2:0] yval [0:5][0:5];
+wire [8:0] xval [0:5][0:5];
+wire [8:0] yval [0:5][0:5];
 
 /*
 This will be used in our generate loop, it will allow us to
@@ -124,8 +117,10 @@ generate
 			assign mid = rows[r+1] [7-c -: 3];
 			assign bot = rows[r+2] [7-c -: 3];
 			
-			assign xval[r][c] = mid;
-			assign yval[r][c] = {top[1], mid[1], bot[1]};
+			assign xval[r][c] = {top, mid, bot};
+			assign yval[r][c] = {top[0], mid[0], bot[0],
+										top[1], mid[1], bot[1],
+										top[2], mid[2], bot[2]};
 		end
 	end
 endgenerate
@@ -168,50 +163,69 @@ assign y1[5] = r6c1y;
 
 /*
 Created a vector form of the rows and columns output, this is so we can use it
-in the future and it will work in our generate loop underneath
+in the future and it will work in our generate loop underneath nvm generate loop doesnt \
+work so instead we need to put in a bunch of code to directly say what is related to what
 */
 
-genvar i;
-generate
-	for (i = 0; i < 6; i = i + 1) begin : count
-		always @* begin 
-			case (muxcnt)
-				3'b000: x1[0] = xval[0][i];
-				3'b001: x1[1] = xval[1][i];
-				3'b010: x1[2] = xval[2][i];
-				3'b011: x1[3] = xval[3][i];
-				3'b100: x1[4] = xval[4][i];
-				3'b101: x1[5] = xval[5][i];
-				
-				3'b000: y1[0] = yval[i][0];
-				3'b001: y1[1] = yval[i][1];
-				3'b010: y1[2] = yval[i][2];
-				3'b011: y1[3] = yval[i][3];
-				3'b100: y1[4] = yval[i][4];
-				3'b101: y1[5] = yval[i][5];
-			endcase
+
+always @* begin
+	r1c1x = 9'b0; r1c1y = 9'b0;
+	r2c1x = 9'b0; r2c1y = 9'b0;
+	r3c1x = 9'b0; r3c1y = 9'b0;
+	r4c1x = 9'b0; r4c1y = 9'b0;
+	r5c1x = 9'b0; r5c1y = 9'b0;
+	r6c1x = 9'b0; r6c1y = 9'b0;
+	
+	case (muxcnt)
+		3'b000: begin
+			r1c1x = xval[0][0]; r1c1y = yval[0][0];
+			r2c1x = xval[1][0]; r2c1y = yval[1][0];
+			r3c1x = xval[2][0]; r3c1y = yval[2][0];
+			r4c1x = xval[3][0]; r4c1y = yval[3][0];
+			r5c1x = xval[4][0]; r5c1y = yval[4][0];
+			r6c1x = xval[5][0]; r6c1y = yval[5][0];
 		end
-	end
-endgenerate
-
-assign r1c1x = xval[0][0];
-assign r1c1y = yval[0][0];
-
-assign r2c1x = xval[0][1];
-assign r2c1y = yval[1][0];
-
-assign r3c1x = xval[0][2];
-assign r3c1y = yval[2][0];
-
-assign r4c1x = xval[0][3];
-assign r4c1y = yval[3][0];
-
-assign r5c1x = xval[0][4];
-assign r5c1y = yval[4][0];
-
-assign r6c1x = xval[0][5];
-assign r6c1y = yval[5][0];
+		3'b001: begin	
+			r1c1x = xval[0][1]; r1c1y = yval[0][1];
+			r2c1x = xval[1][1]; r2c1y = yval[1][1];
+			r3c1x = xval[2][1]; r3c1y = yval[2][1];
+			r4c1x = xval[3][1]; r4c1y = yval[3][1];
+			r5c1x = xval[4][1]; r5c1y = yval[4][1];
+			r6c1x = xval[5][1]; r6c1y = yval[5][1];
+		end
+		3'b010: begin 
+			r1c1x = xval[0][2]; r1c1y = yval[0][2];
+			r2c1x = xval[1][2]; r2c1y = yval[1][2];
+			r3c1x = xval[2][2]; r3c1y = yval[2][2];
+			r4c1x = xval[3][2]; r4c1y = yval[3][2];
+			r5c1x = xval[4][2]; r5c1y = yval[4][2];
+			r6c1x = xval[5][2]; r6c1y = yval[5][2];
+		end
+		3'b011: begin 
+			r1c1x = xval[0][3]; r1c1y = yval[0][3];
+			r2c1x = xval[1][3]; r2c1y = yval[1][3];
+			r3c1x = xval[2][3]; r3c1y = yval[2][3];
+			r4c1x = xval[3][3]; r4c1y = yval[3][3];
+			r5c1x = xval[4][3]; r5c1y = yval[4][3];
+			r6c1x = xval[5][3]; r6c1y = yval[5][3];
+		end
+		3'b100: begin
+			r1c1x = xval[0][4]; r1c1y = yval[0][4];
+			r2c1x = xval[1][4]; r2c1y = yval[1][4];
+			r3c1x = xval[2][4]; r3c1y = yval[2][4];
+			r4c1x = xval[3][4]; r4c1y = yval[3][4];
+			r5c1x = xval[4][4]; r5c1y = yval[4][4];
+			r6c1x = xval[5][4]; r6c1y = yval[5][4];
+		end
+		3'b101: begin
+			r1c1x = xval[0][5]; r1c1y = yval[0][5];
+			r2c1x = xval[1][5]; r2c1y = yval[1][5];
+			r3c1x = xval[2][5]; r3c1y = yval[2][5];
+			r4c1x = xval[3][5]; r4c1y = yval[3][5];
+			r5c1x = xval[4][5]; r5c1y = yval[4][5];
+			r6c1x = xval[5][5]; r6c1y = yval[5][5];
+		end
+	endcase
+end
 
 endmodule
-
-

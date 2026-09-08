@@ -166,17 +166,22 @@ assign y1[3] = r4c1y;
 assign y1[4] = r5c1y;
 assign y1[5] = r6c1y;
 
+/*
+Created a vector form of the rows and columns output, this is so we can use it
+in the future and it will work in our generate loop underneath
+*/
+
 genvar i;
 generate
 	for (i = 0; i < 6; i = i + 1) begin : count
 		always @* begin 
 			case (muxcnt)
-				3'b000: x1[0] = xval[i][0];
-				3'b001: x1[1] = xval[i][1];
-				3'b010: x1[2] = xval[i][2];
-				3'b011: x1[3] = xval[i][3];
-				3'b100: x1[4] = xval[i][4];
-				3'b101: x1[5] = xval[i][5];
+				3'b000: x1[0] = xval[0][i];
+				3'b001: x1[1] = xval[1][i];
+				3'b010: x1[2] = xval[2][i];
+				3'b011: x1[3] = xval[3][i];
+				3'b100: x1[4] = xval[4][i];
+				3'b101: x1[5] = xval[5][i];
 				
 				3'b000: y1[0] = yval[i][0];
 				3'b001: y1[1] = yval[i][1];
@@ -192,20 +197,21 @@ endgenerate
 assign r1c1x = xval[0][0];
 assign r1c1y = yval[0][0];
 
-assign r2c1x = xval[1][0];
+assign r2c1x = xval[0][1];
 assign r2c1y = yval[1][0];
 
-assign r3c1x = xval[2][0];
+assign r3c1x = xval[0][2];
 assign r3c1y = yval[2][0];
 
-assign r4c1x = xval[3][0];
+assign r4c1x = xval[0][3];
 assign r4c1y = yval[3][0];
 
-assign r5c1x = xval[4][0];
+assign r5c1x = xval[0][4];
 assign r5c1y = yval[4][0];
 
-assign r6c1x = xval[5][0];
+assign r6c1x = xval[0][5];
 assign r6c1y = yval[5][0];
 
 endmodule
+
 

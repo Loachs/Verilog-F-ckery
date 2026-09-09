@@ -146,75 +146,22 @@ we then end our loop by putting the values from the rows and columns into our yv
 */
 
 always @* begin
-	r1c1x = 9'b0; r1c1y = 9'b0;
-	r2c1x = 9'b0; r2c1y = 9'b0;
-	r3c1x = 9'b0; r3c1y = 9'b0;
-	r4c1x = 9'b0; r4c1y = 9'b0;
-	r5c1x = 9'b0; r5c1y = 9'b0;
-	r6c1x = 9'b0; r6c1y = 9'b0;
-	
-/*
-sets the base at 0 at the start, we are then able to change it
-I ordered these so that the first x and y column and rows systems
-are all match together.
-*/
-	
-	case (muxcnt)
-		3'b000: begin
-			r1c1x = xval[0][0]; r1c1y = yval[0][0];
-			r2c1x = xval[1][0]; r2c1y = yval[1][0];
-			r3c1x = xval[2][0]; r3c1y = yval[2][0];
-			r4c1x = xval[3][0]; r4c1y = yval[3][0];
-			r5c1x = xval[4][0]; r5c1y = yval[4][0];
-			r6c1x = xval[5][0]; r6c1y = yval[5][0];
-// sets the values at muxcnt of 000
-		end
-		3'b001: begin	
-			r1c1x = xval[0][1]; r1c1y = yval[0][1];
-			r2c1x = xval[1][1]; r2c1y = yval[1][1];
-			r3c1x = xval[2][1]; r3c1y = yval[2][1];
-			r4c1x = xval[3][1]; r4c1y = yval[3][1];
-			r5c1x = xval[4][1]; r5c1y = yval[4][1];
-			r6c1x = xval[5][1]; r6c1y = yval[5][1];
-// sets the values at muxcnt of 001
-		end
-		3'b010: begin 
-			r1c1x = xval[0][2]; r1c1y = yval[0][2];
-			r2c1x = xval[1][2]; r2c1y = yval[1][2];
-			r3c1x = xval[2][2]; r3c1y = yval[2][2];
-			r4c1x = xval[3][2]; r4c1y = yval[3][2];
-			r5c1x = xval[4][2]; r5c1y = yval[4][2];
-			r6c1x = xval[5][2]; r6c1y = yval[5][2];
-// sets the values at muxcnt of 010
-		end
-		3'b011: begin 
-			r1c1x = xval[0][3]; r1c1y = yval[0][3];
-			r2c1x = xval[1][3]; r2c1y = yval[1][3];
-			r3c1x = xval[2][3]; r3c1y = yval[2][3];
-			r4c1x = xval[3][3]; r4c1y = yval[3][3];
-			r5c1x = xval[4][3]; r5c1y = yval[4][3];
-			r6c1x = xval[5][3]; r6c1y = yval[5][3];
-// sets the values at muxcnt of 011
-		end
-		3'b100: begin
-			r1c1x = xval[0][4]; r1c1y = yval[0][4];
-			r2c1x = xval[1][4]; r2c1y = yval[1][4];
-			r3c1x = xval[2][4]; r3c1y = yval[2][4];
-			r4c1x = xval[3][4]; r4c1y = yval[3][4];
-			r5c1x = xval[4][4]; r5c1y = yval[4][4];
-			r6c1x = xval[5][4]; r6c1y = yval[5][4];
-// sets the values at muxcnt of 100
-		end
-		3'b101: begin
-			r1c1x = xval[0][5]; r1c1y = yval[0][5];
-			r2c1x = xval[1][5]; r2c1y = yval[1][5];
-			r3c1x = xval[2][5]; r3c1y = yval[2][5];
-			r4c1x = xval[3][5]; r4c1y = yval[3][5];
-			r5c1x = xval[4][5]; r5c1y = yval[4][5];
-			r6c1x = xval[5][5]; r6c1y = yval[5][5];
-// sets the values at muxcnt of 101
-		end
-	endcase
+	if (muxcnt <= 3'b101) begin
+		r1c1x = xval[0][muxcnt]; r1c1y = yval[0][muxcnt];
+		r2c1x = xval[1][muxcnt]; r2c1y = yval[1][muxcnt];
+		r3c1x = xval[2][muxcnt]; r3c1y = yval[2][muxcnt];
+		r4c1x = xval[3][muxcnt]; r4c1y = yval[3][muxcnt];
+		r5c1x = xval[4][muxcnt]; r5c1y = yval[4][muxcnt];
+		r6c1x = xval[5][muxcnt]; r6c1y = yval[5][muxcnt];
+	end
+	else begin
+		r1c1x = 9'b0; r1c1y = 9'b0;
+		r2c1x = 9'b0; r2c1y = 9'b0;
+		r3c1x = 9'b0; r3c1y = 9'b0;
+		r4c1x = 9'b0; r4c1y = 9'b0;
+		r5c1x = 9'b0; r5c1y = 9'b0;
+		r6c1x = 9'b0; r6c1y = 9'b0;
+	end
 end
 
 endmodule

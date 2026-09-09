@@ -145,29 +145,6 @@ we then end our loop by putting the values from the rows and columns into our yv
 
 */
 
-wire [5:0] x1 [0:5];
-assign x1[0] = r1c1x;
-assign x1[1] = r2c1x;
-assign x1[2] = r3c1x;
-assign x1[3] = r4c1x;
-assign x1[4] = r5c1x;
-assign x1[5] = r6c1x;
-
-wire [5:0] y1 [0:5];
-assign y1[0] = r1c1y;
-assign y1[1] = r2c1y;
-assign y1[2] = r3c1y;
-assign y1[3] = r4c1y;
-assign y1[4] = r5c1y;
-assign y1[5] = r6c1y;
-
-/*
-Created a vector form of the rows and columns output, this is so we can use it
-in the future and it will work in our generate loop underneath nvm generate loop doesnt \
-work so instead we need to put in a bunch of code to directly say what is related to what
-*/
-
-
 always @* begin
 	r1c1x = 9'b0; r1c1y = 9'b0;
 	r2c1x = 9'b0; r2c1y = 9'b0;

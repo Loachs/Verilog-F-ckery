@@ -16,9 +16,7 @@ input [7:0] row5,
 input [7:0] row6,
 input [7:0] row7,
 input [7:0] row8,
-
 input clk,
-
 input [2:0] muxcnt,
 
 output reg [8:0] r1c1x,
@@ -38,7 +36,6 @@ assign rows[4] = row5;
 assign rows[5] = row6;
 assign rows[6] = row7;
 assign rows[7] = row8;
-
 wire [8:0] xval [0:5][0:5];
 
 genvar r, c;
@@ -76,5 +73,4 @@ always @* begin
 		r6c1x = 9'b0;
 	end
 end
-
 endmodule

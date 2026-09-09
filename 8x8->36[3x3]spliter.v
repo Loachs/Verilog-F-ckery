@@ -2,7 +2,7 @@ module retardmaxedbullshit(
 
 /*
 {--------------------------------}
-You must have over 176 pins to
+You must have over 121 pins to
 allocate to use this because
 of this code -READ THIS-
 {--------------------------------}
@@ -16,15 +16,14 @@ input [7:0] row5,
 input [7:0] row6,
 input [7:0] row7,
 input [7:0] row8,
-input clk,
 input [2:0] muxcnt,
 
-output reg [8:0] r1c1x,
-output reg [8:0] r2c1x,
-output reg [8:0] r3c1x,
-output reg [8:0] r4c1x,
-output reg [8:0] r5c1x,
-output reg [8:0] r6c1x
+output reg [8:0] c1,
+output reg [8:0] c2,
+output reg [8:0] c3,
+output reg [8:0] c4,
+output reg [8:0] c5,
+output reg [8:0] c6
 ); 
 
 wire [7:0] rows [0:7];
@@ -36,6 +35,7 @@ assign rows[4] = row5;
 assign rows[5] = row6;
 assign rows[6] = row7;
 assign rows[7] = row8;
+
 wire [8:0] xval [0:5][0:5];
 
 genvar r, c;
@@ -57,20 +57,20 @@ endgenerate
 
 always @* begin
 	if (muxcnt <= 3'b101) begin
-		r1c1x = xval[0][muxcnt];
-		r2c1x = xval[1][muxcnt];
-		r3c1x = xval[2][muxcnt];
-		r4c1x = xval[3][muxcnt];
-		r5c1x = xval[4][muxcnt];
-		r6c1x = xval[5][muxcnt];
+		c1 = xval[0][muxcnt];
+		c2 = xval[1][muxcnt];
+		c3 = xval[2][muxcnt];
+		c4 = xval[3][muxcnt];
+		c5 = xval[4][muxcnt];
+		c6 = xval[5][muxcnt];
 	end
 	else begin
-		r1c1x = 9'b0;
-		r2c1x = 9'b0;
-		r3c1x = 9'b0;
-		r4c1x = 9'b0;
-		r5c1x = 9'b0
-		r6c1x = 9'b0;
+		c1 = 9'b0;
+		c2 = 9'b0;
+		c3 = 9'b0;
+		c4 = 9'b0;
+		c5 = 9'b0;
+		c6 = 9'b0;
 	end
 end
 endmodule

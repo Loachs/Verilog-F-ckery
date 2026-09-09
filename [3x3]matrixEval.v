@@ -35,7 +35,7 @@ always @* begin
 		0'b 101: begin
 			xv[5] = xval; yv[5] = yval;
 		end
-	end
+	endcase
 end
 
 // I need to wire all the curve, diag and nothing vals 

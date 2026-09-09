@@ -1,31 +1,5 @@
 module retardmaxedbullshit(
 
-/*
-READ THIS BEFORE YOU DO ANYTHING
-
-{--------------------------------}
-You must have over 176 pins to
-allocate to use this because
-of this code -READ THIS-
-I will be working to decrease this
-{--------------------------------}
-
-All rows will be either 1 or 0 ex: 001-001-100 (dashes represent a 3 split)
-A lot of the purpose of this part is to split the values up into more managable chunks
-Due to the fact that most of this will be done by hand and im fucking lazy
-
-The main goal of the neural input splitter is to make 36 3x3 boxes, the reason for this is
-because we have an 8x8 grid I want to chunk it down to size and I can do that by essentially
-doing this C++ code below
-
-	for (int i = 0; i <= 5; i++)
-		for (int j = 0; j <= 5; j++)
-	  
-This essentially is a simple matrix sort algorithm that will allow us to get all 36 3x3 grids on the 
-8x8 board, I will also output a position value that is unique to each 3x3 grid. I will be doing this
-because I want a position vector (most of this will be vectors work)
-*/
-
 input [7:0] row1,
 input [7:0] row2,
 input [7:0] row3,
@@ -34,41 +8,8 @@ input [7:0] row5,
 input [7:0] row6,
 input [7:0] row7,
 input [7:0] row8,
-
-input clk, // Our constant clock value
-
-input [2:0] muxcnt, // This is what will control out mux
-/*
-READ THIS
-The mux count will max out at 3 bits. We will use our mux to
-go through the values 0-5, this is because we are working in a 
-6x6 matrix therefore by capping out mux at 6 we can use it as a
-positional vector for when we calculate rows and columns
-This is also to reduce the pin count by 180, since currently we 
-have 216 output pins and since we mux by 6, that goes down to 
-36 exits which saves us a total of 180 pins - total pin count will
-end up being 104 once we are done
-
-This has been changed we now have a total of 176 pins, this is because I want
-one string with all values of row / column which just means the outputs of 
-muxed pins is *3
-*/
-
-/*
-The outputs will be notated as rNcN where r is the row N is the location of the row in 
-relation to the 6x6 grid of 3x3s. c is the column and N is the location of the column in relation to
-the 6x6 grid of 3x3s. x and y dictate if its the x values or y values
-
-The order in which the vectors will be first vector is x row which can be visualized as 010 or whatever
-it will start top to down, as for the y column it will be read left to right and it will be the second
-vector in the pair.
-
-I have decided against doing a multidimensional packed vector for my outputs, I believe that this will
-help make it easier in the future to separate vectors, aswell my experience in the past with them
-has made troubleshooting a lot harder especialy when we get in the realm of having a fuck ton.
-
-I dont think I can use a generate function for my output declaration
-*/
+input clk,
+input [2:0] muxcnt,
 
 output reg [8:0] r1c1x, output reg [8:0] r1c1y, 
 output reg [8:0] r2c1x, output reg [8:0] r2c1y,
@@ -77,11 +18,6 @@ output reg [8:0] r4c1x, output reg [8:0] r4c1y,
 output reg [8:0] r5c1x, output reg [8:0] r5c1y,
 output reg [8:0] r6c1x, output reg [8:0] r6c1y
 ); 
-
-/*
-I dont want to fucking write out like a fuck ton of lines so I will "automate" it
-this is the same thing as doing {wire r1c1x [2:0] = row1 [2:0];}
-*/ 
 
 wire [7:0] rows [0:7];
 assign rows[0] = row1;
@@ -93,17 +29,8 @@ assign rows[5] = row6;
 assign rows[6] = row7;
 assign rows[7] = row8;
 
-/*
-This is just helping with out generate loop that we will have underneath, it will allow me to
-increment the row value without needing to make a loop for every singl row / column
-*/
-
 wire [8:0] xval [0:5][0:5];
 wire [8:0] yval [0:5][0:5];
-
-/*
-This will be used in our generate loop, it will allow us to
-*/
 
 genvar r, c;
 generate 
@@ -125,26 +52,6 @@ generate
 	end
 endgenerate
 
-/*
-For the generate loop we get our generate variables we will call them r and c, r for row and c for
-column, we will use a double for loop which increments. The reason we do this is so we can pass through
-every possible section. we can do this by subtracting our mini matrix (3x3) by our bigger matrix (8x8)
-and then adding the center point (1) this essentially lets us run a path in the center section to hit all
-targets. this is wht we have out system stop at 6. it will go right 6 times then go back to 0 and go down
-it will repeat until it finishes.
-
-we wire up a three vector top, bot, and mid. these are three point vectors to hold the vector data
-essentially they will all hold columns of three values so we can grab them from our data table.
-
-We then assign the top, mid, and bottom vals based off the previous rows and columns for the first
-vector it adds 1 and 2, this is because we have a 3x3 vector we are able to reach as for the second
-vector it starts at 7 and gets decreased by c, the vector then moves a total of 3 bits which allows
-us to get the entire 3x3 matrix
-
-we then end our loop by putting the values from the rows and columns into our yval[r][c] and xval[r][c]
-
-*/
-
 always @* begin
 	if (muxcnt <= 3'b101) begin
 		r1c1x = xval[0][muxcnt]; r1c1y = yval[0][muxcnt];
@@ -163,5 +70,4 @@ always @* begin
 		r6c1x = 9'b0; r6c1y = 9'b0;
 	end
 end
-
 endmodule

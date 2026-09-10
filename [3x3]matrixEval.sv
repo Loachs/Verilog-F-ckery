@@ -1,24 +1,22 @@
 module retardcurvatureshit(
 
 input [8:0] xval,
-input [2:0] muxcnt,
 // 12 pin input
 
-output [7:0] curve,
-output [7:0] diag,
-output [7:0] nothing
+output reg [7:0] curve,
+output reg [7:0] diag,
+output reg [7:0] nothing
 // 24 pin output
 
 );
 
 reg [3:0] bits;
-
-wire [2:0]row1;
-wire [2:0]row2;
-wire [2:0]row3;
-wire [2:0]col1;
-wire [2:0]col2;
-wire [2:0]col3;
+reg [2:0]row1;
+reg [2:0]row2;
+reg [2:0]row3;
+reg [2:0]col1;
+reg [2:0]col2;
+reg [2:0]col3;
 
 always @* begin
 	diag = 8'b0;
@@ -81,12 +79,12 @@ always @* begin
 			disable curve_Val;
 		end
 
-		if ((row1 | row3) & (col1 | col3)) begin
+		if ((row1 || row3) & (col1 || col3)) begin
 			curve = 8'b00001000;
 			disable curve_Val;
 		end
 
-		if (((row1 | row3) & (xval[3] | xval[5])) | ((col1 | col3) & (xval[1] | xval[7]))) begin
+		if (((row1 || row3) & (xval[3] | xval[5])) | ((col1 || col3) & (xval[1] | xval[7]))) begin
 			curve = 8'b00000100;
 			disable curve_Val;
 		end
@@ -96,7 +94,7 @@ always @* begin
 			disable curve_Val;
 		end
 
-		if (row1 | row2 | row3 | col1 | col2 | col3) begin
+		if (row1 || row2 || row3 || col1 || col2 || col3) begin
 			curve = 8'b00000001;
 			disable curve_Val;
 		end

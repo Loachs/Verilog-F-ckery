@@ -11,126 +11,140 @@ output [7:0] nothing
 
 );
 
-reg [3:0] bits
+reg [3:0] bits;
+
+wire [2:0]row1;
+wire [2:0]row2;
+wire [2:0]row3;
+wire [2:0]col1;
+wire [2:0]col2;
+wire [2:0]col3;
 
 always @* begin
-	bits = xval[0] + xval[1] + xval[2] +
-			 xval[3] + xval[4] + xval[5] +
-			 xval[6] + xval[7] + xval[8];
-			 
-	wire [2:0]row1 = xval[0] + xval[1] + xval[2];
-	wire [2:0]row2 = xval[3] + xval[4] + xval[5];
-	wire [2:0]row3 = xval[4] + xval[7] + xval[8];
-	
-	wire [2:0]col1 = xval[0] + xval[3] + xval[6];
-	wire [2:0]col2 = xval[1] + xval[4] + xval[7];
-	wire [2:0]col3 = xval[2] + xval[5] + xval[8];
-	
-	
-	curve =		8b'0;
-	diag =		8b'0;
-	nothing =	8b'0;
+	diag = 8'b0;
 	
 	//Diag
 	begin : diag_Val
-		if (xval[0] & xval[4] & xval[8] & !(xval[6] | xval[2])) begin : 
-			diag = //high val
+		if (xval[0] & xval[4] & xval[8] & !(xval[6] | xval[2])) begin
+			diag = 8'b10000000;
 			disable diag_Val;
 		end
-			
-		if (xval[2] & xval[4] & xval[6] & !(xval[0] | xval[8])) begin :
-			diag = // High Val
+	
+		if (xval[2] & xval[4] & xval[6] & !(xval[0] | xval[8])) begin
+			diag = 8'b01000000;
 			disable diag_Val;
 		end
-		
-		if (((xval[1] & xval[3]) | (xval[5] & xval[7]) | ((xval[2] | xval[6]) & xval[4])) & (!(xval[0] | xval[9]))) begin :
-			diag = // mid val
+	
+		if (((xval[1] & xval[3]) | (xval[5] & xval[7]) | ((xval[2] | xval[6]) & xval[4])) & (!(xval[0] | xval[8]))) begin
+			diag = 8'b00100000;
 			disable diag_Val;
 		end
-		
-		if (((xval[1] & xval[5]) | (xval[3] & xval[7]) | ((xval[0] | xval[8]) & xval[4])) & (!(xval[2] | xval[6]))) begin :
-			diag = // mid val
+	
+		if (((xval[1] & xval[5]) | (xval[3] & xval[7]) | ((xval[0] | xval[8]) & xval[4])) & (!(xval[2] | xval[6]))) begin
+			diag = 8'b00010000;
 			disable diag_Val;	
 		end
 	end
+end
+
+always @* begin	 
+			 
+	row1 = {xval[0], xval[1], xval[2]};
+	row2 = {xval[3], xval[4], xval[5]};
+	row3 = {xval[6], xval[7], xval[8]};
+	
+	col1 = {xval[0], xval[3], xval[6]};
+	col2 = {xval[1], xval[4], xval[7]};
+	col3 = {xval[2], xval[5], xval[8]};
+	
+	curve = 8'b0;
 	
 	// curve
 	begin : curve_Val
-		if (!xval[0] & xval[1] & xval[2] & xval[3] & xval[6] & !(xval[5] | xval[7] |xval[8])) begin :
-			curve = // high val
+		if (!xval[0] & xval[1] & xval[2] & xval[3] & xval[6] & !(xval[5] | xval[7] |xval[8])) begin
+			curve = 8'b10000000;
 			disable curve_Val;
 		end
 		
-		if (!xval[2] & xval[0] & xval[1] & xval[5] & xval[8] & !(xval[3] | xval[6] |xval[7])) begin :
-			curve = // high val
+		if (!xval[2] & xval[0] & xval[1] & xval[5] & xval[8] & !(xval[3] | xval[6] |xval[7])) begin
+			curve = 8'b01000000;
 			disable curve_Val;
 		end
-		
-		if (!xval[8] & xval[6] & xval[7] & xval[2] & xval[5] & !(xval[0] | xval[1] |xval[3])) begin :
-			curve = // high val
+	
+		if (!xval[8] & xval[6] & xval[7] & xval[2] & xval[5] & !(xval[0] | xval[1] |xval[3])) begin
+			curve = 8'b00100000;
 			disable curve_Val;
 		end
-		
-		if (!xval[6] & xval[0] & xval[3] & xval[7] & xval[8] & !(xval[1] | xval[2] |xval[5])) begin :
-			curve = // high val
+
+		if (!xval[6] & xval[0] & xval[3] & xval[7] & xval[8] & !(xval[1] | xval[2] |xval[5])) begin
+			curve = 8'b00010000;
 			disable curve_Val;
 		end
-		
-		if ((row[1] | row[3]) & (col[1] | col[3])) begin :
-			curve = // high val
+
+		if ((row1 | row3) & (col1 | col3)) begin
+			curve = 8'b00001000;
 			disable curve_Val;
 		end
-		
-		if (((row[1] | row[3]) & (xval[3] | xval[5])) | ((col[1] | col[3]) & (xval[1] | xval[7]))) begin :
-			curve = //mid val
-		end
-		
-		if ((row[2] & (row[1] | row[3]) | (col[2] & (col[1] | col[2])) begin :
-			curve = // Nothing
+
+		if (((row1 | row3) & (xval[3] | xval[5])) | ((col1 | col3) & (xval[1] | xval[7]))) begin
+			curve = 8'b00000100;
 			disable curve_Val;
 		end
-		
-		if (row[1] | row[2] | row[3] | col[1] | col[2] | col[3]) begin :
-			curve = // nothing
+
+		if (row2 & (row1 | row3) | (col2 & (col1 | col2))) begin
+			curve = 8'b00000010;
 			disable curve_Val;
 		end
-		
-		if (((xval[0] | xval[6]) & xval[3]) | ((xval[1] | xval[7]) & xval[4]) | ((xval[2] | xval[8]) & xval[5]) begin :
-			curve = //nothing
+
+		if (row1 | row2 | row3 | col1 | col2 | col3) begin
+			curve = 8'b00000001;
 			disable curve_Val;
 		end
-		
-		if (((xval[0] | xval[2]) & xval[1]) | ((xval[3] | xval[5]) & xval[4]) | ((xval[6] | xval[8]) & xval[7]) begin :
-			curve = // nothing
+
+		if (((xval[0] | xval[6]) & xval[3]) | ((xval[1] | xval[7]) & xval[4]) | ((xval[2] | xval[8]) & xval[5])) begin
+			curve = 8'b00000000;
+			disable curve_Val;
+		end
+
+		if (((xval[0] | xval[2]) & xval[1]) | ((xval[3] | xval[5]) & xval[4]) | ((xval[6] | xval[8]) & xval[7])) begin
+			curve = 8'b10000001;
 			disable curve_Val;
 		end
 	end
+end
+
+always @* begin
 	
+	bits = 4'b0;
+	for (int i = 0; i < 9; i = i + 1) begin
+		if (xval[i] == 1) begin
+			bits = bits + 1;
+		end
+	end
+
+	nothing = 8'b0;	
 	// nothing
 	begin : nothing_val
-		if (bits <= 1) begin : 
-			nothing = // High
+		if (bits <= 1) begin 
+			nothing = 8'b10000000;
 			disable nothing_val;
 		end
-		
-		if (bits = 2) begin :
-			nothing = //mid
+	
+		if (bits == 2) begin
+			nothing = 8'b01000000;
 			disable nothing_val;
 		end
 
-		if (bits = 3) begin :
-			nothing = //low
+		if (bits == 3) begin
+			nothing = 8'b00100000;
 			disable nothing_val;
 		end
-		
-		else begin :
-			nothing = //zero
+	
+		else begin
+			nothing = 8'b00010000;
 			disable nothing_val;
 		end
 	end
 end
+
 endmodule
-		nothing = //zero
-	break
-	
-	
